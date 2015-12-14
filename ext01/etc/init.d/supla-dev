@@ -52,7 +52,7 @@ w1_add() {
            echo $NEXT
         }`
 
-        if echo -n $NEXT | grep -E "^[0-9]$" 2> /dev/null > /dev/null; then
+        if echo -n $NEXT | grep -E "^[0-9]+$" 2> /dev/null > /dev/null; then
 
           if [ ! -s $W1CFG ]; then
              cp $CFG $W1CFG

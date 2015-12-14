@@ -1,0 +1,6 @@
+[LOCATION]
+ID=
+PASSWORD=
+
+[SERVER]
+host=

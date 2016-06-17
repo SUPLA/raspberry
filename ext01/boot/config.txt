@@ -1,4 +1,4 @@
-# For more options and information see 
+# For more options and information see
 # http://www.raspberrypi.org/documentation/configuration/config-txt.md
 # Some settings may impact device functionality. See link above for details
 
@@ -51,4 +51,9 @@
 #dtoverlay=lirc-rpi
 
 # Additional overlays and parameters are documented /boot/overlays/README
+
+# Enable audio (loads snd_bcm2835)
+dtparam=audio=on
+
+#OneWire
 dtoverlay=w1-gpio

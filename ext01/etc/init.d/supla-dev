@@ -60,7 +60,7 @@ w1_add() {
 
           echo "" >> $W1CFG
           echo "[CHANNEL_"$NEXT"]" >> $W1CFG
-          echo "type=3000" >> $W1CFG
+          echo "type=THERMOMETERDS18B20" >> $W1CFG
           echo "w1="$NAME >> $W1CFG
 
         fi

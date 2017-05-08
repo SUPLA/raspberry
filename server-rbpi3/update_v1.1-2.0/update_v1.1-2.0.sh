@@ -102,6 +102,7 @@ if ! grep "supla:generate-schedules-executions" /etc/crontab 2> /dev/null > /dev
    echo "1 */4    * * *   root   php /var/www/html/bin/console supla:generate-schedules-executions 2>> /var/log/generate-schedules-executions.err.log > /var/log/generate-schedules-executions.log" >> /etc/crontab
 fi
 
+systemctl daemon-reload
 /etc/init.d/apache2 restart
 /etc/init.d/supla-server start
 /etc/init.d/supla-scheduler start

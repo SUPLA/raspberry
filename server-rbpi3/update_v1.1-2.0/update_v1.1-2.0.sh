@@ -21,24 +21,24 @@ if [ "$(id -u)" != "0" ]; then
    exit 1
 fi
 
-#if [ ! -d "/var/www/html/src/AppBundle" ]; then
+if [ ! -d "/var/www/html/src/AppBundle" ]; then
 
-#   if grep "supla cloud 2.0" /var/www/html/src/SuplaBundle/Resources/views/Account/view.html.twig 2> /dev/null > /dev/null; then
-#     echo CLOUD v2.0 already installed
-#   else
-#     echo "Unknown CLOUD version"
-#   fi
+   if grep "supla cloud 2.0" /var/www/html/src/SuplaBundle/Resources/views/Account/view.html.twig 2> /dev/null > /dev/null; then
+     echo CLOUD v2.0 already installed
+   else
+     echo "Unknown CLOUD version"
+   fi
 
-#   exit 1
-#fi
+   exit 1
+fi
 
 now=$(date +"%m%d%Y%H%M%S")
 
-#apt-get update
-#apt-get -y upgrade
+apt-get update
+apt-get -y upgrade
 
-#mysqldump -u root -praspberry supla > /var/backups/supla"$now".sql
-#gzip /var/backups/supla"$now".sql
+mysqldump -u root -praspberry supla > /var/backups/supla"$now".sql
+gzip /var/backups/supla"$now".sql
 
 
 if dpkg --list | grep php7 2> /dev/null > /dev/null; then
@@ -71,8 +71,8 @@ fi
 [ -e /usr/sbin/supla-server_v1.1 ] || cp /usr/sbin/supla-server /usr/sbin/supla-server_v1.1 
 [ -d /var/www/html_old_v1.1 ] || mv /var/www/html /var/www/html_old_v1.1 
 
-#cp /var/www/html_old_v1.1/app/config/parameters.yml ./update_files_v1.1-2.0/var/www/html/app/config/
-#cp -r update_files_v1.1-2.0/* /
+cp /var/www/html_old_v1.1/app/config/parameters.yml ./update_files_v1.1-2.0/var/www/html/app/config/
+cp -r update_files_v1.1-2.0/* /
 
 if ! grep use_webpack_dev_server /var/www/html/app/config/parameters.yml 2> /dev/null > /dev/null; then
   echo "    use_webpack_dev_server: false" >> /var/www/html/app/config/parameters.yml
@@ -102,6 +102,7 @@ if ! grep "supla:generate-schedules-executions" /etc/crontab 2> /dev/null > /dev
    echo "1 */4    * * *   root   php /var/www/html/bin/console supla:generate-schedules-executions 2>> /var/log/generate-schedules-executions.err.log > /var/log/generate-schedules-executions.log" >> /etc/crontab
 fi
 
+/etc/init.d/apache2 restart
 /etc/init.d/supla-server start
 /etc/init.d/supla-scheduler start
 

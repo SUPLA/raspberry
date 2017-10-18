@@ -1,0 +1,4 @@
+supla_api:
+  type: rest
+  prefix: /api
+  resource: "@SuplaApiBundle/Controller"

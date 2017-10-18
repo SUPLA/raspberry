@@ -1,0 +1,21 @@
+# This file is auto-generated during the composer install
+parameters:
+    database_driver: pdo_mysql
+    database_host: localhost
+    database_port: 3306
+    database_name: supla
+    database_user: supla
+    database_password: J57P0DzKIOycvqoI
+    mailer_transport: smtp
+    mailer_host: 
+    mailer_user: 
+    mailer_password: 
+    mailer_port: 465
+    mailer_encryption: ssl
+    mailer_from: noreply@raspberrypi
+    admin_email: przemek@raspberrypi
+    supla_server: raspberrypi
+    ewz_recaptcha_public_key: 
+    ewz_recaptcha_private_key: 
+    locale: en
+    secret: 70be14e5553baaaaaa016babbe2bba65

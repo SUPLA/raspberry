@@ -1,0 +1,6 @@
+supla:
+  resource: "@SuplaBundle/Controller"
+  type: annotation
+
+fos_oauth_server_token:
+  resource: "@FOSOAuthServerBundle/Resources/config/routing/token.xml"

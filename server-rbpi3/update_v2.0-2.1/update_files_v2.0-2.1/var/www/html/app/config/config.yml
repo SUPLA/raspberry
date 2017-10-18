@@ -1,0 +1,96 @@
+imports:
+  - { resource: parameters.yml }
+  - { resource: security.yml }
+  - { resource: services.yml }
+  - { resource: config_build.yml, ignore_errors: true }
+
+doctrine:
+  dbal:
+    charset: UTF8
+    dbname: "%database_name%"
+    driver: "%database_driver%"
+    host: "%database_host%"
+    password: "%database_password%"
+    port: "%database_port%"
+    types:
+      utcdatetime: SuplaBundle\Model\UTCDateTimeType
+    user: "%database_user%"
+  orm:
+    auto_generate_proxy_classes: "%kernel.debug%"
+    auto_mapping: true
+
+ewz_recaptcha:
+  private_key: "%ewz_recaptcha_private_key%"
+  public_key: "%ewz_recaptcha_public_key%"
+
+fos_oauth_server:
+  access_token_class: SuplaApiBundle\Entity\AccessToken
+  auth_code_class: SuplaApiBundle\Entity\AuthCode
+  client_class: SuplaApiBundle\Entity\Client
+  db_driver: orm
+  refresh_token_class: SuplaApiBundle\Entity\RefreshToken
+  service:
+    options:
+      access_token_lifetime: 30
+      refresh_token_lifetime: 60
+      supported_scopes: restapi
+    storage: SuplaApiBundle\Provider\OAuthStorageWithLegacyPasswordSupport
+
+fos_rest:
+  routing_loader:
+    default_format: json
+
+framework:
+  assets:
+    packages:
+      webpack:
+        version_strategy: SuplaBundle\Twig\WebpackAssetVersionStrategy
+  csrf_protection: ~
+  default_locale: "%locale%"
+  form: ~
+  fragments: ~
+  http_method_override: true
+  router:
+    resource: "%kernel.root_dir%/config/routing.yml"
+    strict_requirements: ~
+  secret: "%secret%"
+  serializer:
+    enable_annotations: true
+    enabled: true
+  session:
+    cookie_lifetime: 0
+    handler_id: ~
+  templating:
+    engines:
+      - twig
+  translator:
+    fallbacks: en
+  trusted_hosts: ~
+  validation:
+    enable_annotations: true
+
+supla:
+  clients_registration:
+    registration_active_time:
+      initial: 604800 # 1 week
+      manual: 86400 # 24 hours
+  io_devices_registration:
+    registration_active_time:
+      initial: 604800 # 1 week
+      manual: 86400 # 24 hours
+
+swiftmailer:
+  encryption: "%mailer_encryption%"
+  host: "%mailer_host%"
+  password: "%mailer_password%"
+  port: "%mailer_port%"
+  spool:
+    type: memory
+  transport: "%mailer_transport%"
+  username: "%mailer_user%"
+
+twig:
+  debug: "%kernel.debug%"
+  form_themes:
+    - "SuplaBundle:Form:fields.html.twig"
+  strict_variables: "%kernel.debug%"

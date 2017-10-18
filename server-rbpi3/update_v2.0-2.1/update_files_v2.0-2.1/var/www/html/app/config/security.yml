@@ -1,0 +1,47 @@
+security:
+  encoders: 
+    SuplaApiBundle\Entity\ApiUser: 
+            algorithm:            bcrypt
+            cost:                 4
+            
+    SuplaBundle\Entity\User: bcrypt
+    legacy_encoder: md5
+  erase_credentials: false # in order to migrate legacy passwords
+
+  firewalls:
+    dev:
+      pattern: ^/(_(profiler|wdt)|css|images|js)/
+      security: false
+
+    api:
+      anonymous: false
+      fos_oauth: true
+      pattern: ^/api/
+      stateless: true
+
+    main:
+      anonymous: true
+      form_login:
+        check_path: _auth_login
+        login_path: _auth_login
+        success_handler: SuplaBundle\Handler\AuthHandler
+        require_previous_session: false
+      logout:
+        path: /auth/logout
+        target: /auth/login
+
+  access_control:
+    -
+      path: ^/(auth|(account/(create|check|confirm|register|reset|ajax/(forgot|user_exists)))|oauth/v2/token)
+      role: [IS_AUTHENTICATED_ANONYMOUSLY]
+      requires_channel: https
+    -
+      path: ^/
+      role: [IS_AUTHENTICATED_FULLY]
+      requires_channel: https
+
+  providers:
+    supla_db_provider: 
+      entity: 
+        class: "SuplaBundle:User"
+        property: email

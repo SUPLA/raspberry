@@ -1,0 +1,15 @@
+# Config generated automatically by running composer run-script webpack
+
+supla:
+  version: 2.1.0
+  webpack_hashes:
+    login-page: "login-page.d18d55a3e04cfdc4574e.js"
+    translations/messages-ru: "translations/messages-ru.e25b5a2ecded66df4f63.js"
+    translations/messages-pt: "translations/messages-pt.ce6b9e61bf3c2babc79a.js"
+    translations/messages-pl: "translations/messages-pl.bd12522f5f5599ed677f.js"
+    translations/messages-it: "translations/messages-it.6a1a450ecb03dc26d9e7.js"
+    translations/messages-fr: "translations/messages-fr.0a153fcf2724656e11d8.js"
+    translations/messages-es: "translations/messages-es.cdd0a597c719394f4bd8.js"
+    translations/messages-en: "translations/messages-en.b7b3a898c74ef99b401f.js"
+    translations/messages-de: "translations/messages-de.5e058039e2ede281d843.js"
+    commons: "commons.302e01d75cf8b6c6fa06.js"

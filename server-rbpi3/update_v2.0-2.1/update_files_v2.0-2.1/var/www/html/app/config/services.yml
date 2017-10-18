@@ -1,0 +1,91 @@
+imports:
+  - { resource: services_legacy_aliases.yml }
+
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  Doctrine\ORM\EntityManager: '@doctrine.orm.default_entity_manager'
+  Doctrine\ORM\EntityManagerInterface: '@doctrine.orm.default_entity_manager'
+
+  SuplaBundle\EventListener\LocaleListener:
+    - "%kernel.default_locale%"
+
+  SuplaBundle\Handler\AuthHandler: ~
+
+  SuplaBundle\Form\Type\ChannelFunctionType:
+    tags:
+      - { alias: channelfunction, name: form.type }
+
+  SuplaApiBundle\Provider\ApiUserProvider: ~
+
+  SuplaBundle\Controller\:
+    resource: '../../src/SuplaBundle/Controller'
+    public: true
+
+  SuplaApiBundle\Controller\:
+    resource: '../../src/SuplaApiBundle/Controller'
+    public: true
+
+  SuplaBundle\Model\:
+    resource: '../../src/SuplaBundle/Model'
+
+  SuplaBundle\Model\UserManager:
+    $defaultClientsRegistrationTime: '%supla.clients_registration.registration_active_time.initial%'
+    $defaultIoDevicesRegistrationTime: '%supla.io_devices_registration.registration_active_time.initial%'
+
+  SuplaBundle\Model\Schedule\SchedulePlanners\CompositeSchedulePlanner:
+    $planners:
+      - '@SuplaBundle\Model\Schedule\SchedulePlanners\IntervalSchedulePlanner'
+      - '@SuplaBundle\Model\Schedule\SchedulePlanners\SunriseSunsetSchedulePlanner'
+      - '@SuplaBundle\Model\Schedule\SchedulePlanners\CronExpressionSchedulePlanner'
+
+  SuplaApiBundle\Model\APIManager: ~
+
+  SuplaBundle\Supla\:
+    resource: '../../src/SuplaBundle/Supla'
+    
+  SuplaBundle\Supla\SuplaAutodiscover:
+    $server: "%supla_autodiscover_server%"
+    
+  SuplaBundle\Supla\ServerList:
+    $supla_server: "%supla_server%"
+    $supla_server_list: "%supla_server_list%"
+
+  SuplaBundle\Twig\WebpackAssetVersionStrategy:
+    arguments:
+      - "%use_webpack_dev_server%"
+      - "%supla.webpack_hashes%"
+
+  SuplaApiBundle\Provider\OAuthStorageWithLegacyPasswordSupport:
+    $userProvider: '@SuplaApiBundle\Provider\ApiUserProvider'
+
+  SuplaBundle\EventListener\AjaxExceptionHandler:
+    arguments:
+      - "%kernel.debug%"
+    tags:
+      - { name: kernel.event_subscriber }
+
+  SuplaBundle\EventListener\LegacyPasswordMigrationListener:
+    tags:
+      - { event: security.interactive_login, name: kernel.event_listener }
+
+  SuplaBundle\Mailer\SuplaMailer:
+    $mailer_from: "%mailer_from%"
+    $email_admin: "%admin_email%"
+    $supla_server: "%supla_server%"
+
+  twig.extension.intl:
+    class: Twig_Extensions_Extension_Intl
+
+  SuplaBundle\Twig\IoDeviceAttributesToStringExtension: ~
+
+  SuplaBundle\Validator\Constraints\ChannelValidator:
+    tags:
+      - { alias: channel_validator, name: validator.constraint_validator }
+
+  SuplaBundle\Validator\Constraints\UsernameExistsValidator:
+    tags:
+      - { alias: username_exists_validator, name: validator.constraint_validator }

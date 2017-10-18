@@ -1,0 +1,29 @@
+services:
+    ewz_recaptcha.locale.resolver:
+        class: EWZ\Bundle\RecaptchaBundle\Locale\LocaleResolver
+        public: false
+        arguments:
+            - '%ewz_recaptcha.locale_key%'
+            - '%ewz_recaptcha.locale_from_request%'
+            - '@request_stack'
+
+    ewz_recaptcha.form.type:
+        class: EWZ\Bundle\RecaptchaBundle\Form\Type\EWZRecaptchaType
+        arguments:
+            - '%ewz_recaptcha.public_key%'
+            - '%ewz_recaptcha.enabled%'
+            - '%ewz_recaptcha.ajax%'
+            - '@ewz_recaptcha.locale.resolver'
+        tags:
+            - { name: form.type }
+
+    ewz_recaptcha.validator.true:
+            class: EWZ\Bundle\RecaptchaBundle\Validator\Constraints\IsTrueValidator
+            arguments:
+                - '%ewz_recaptcha.enabled%'
+                - '%ewz_recaptcha.private_key%'
+                - '@request_stack'
+                - '%ewz_recaptcha.http_proxy%'
+                - '%ewz_recaptcha.verify_host%'
+            tags:
+                - { name: validator.constraint_validator, alias: 'ewz_recaptcha.true' }

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- https://phpunit.de/manual/current/en/appendixes.configuration.html -->
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/4.8/phpunit.xsd"
+         backupGlobals="false"
+         colors="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="false"
+         convertWarningsToExceptions="true"
+         strict="true"
+         bootstrap="autoload.php">
+
+    <php>
+        <server name="KERNEL_DIR" value="../app"/>
+    </php>
+
+    <listeners>
+        <listener class="SuplaBundle\Tests\Integration\IntegrationTestCaseListener"
+                  file="../src/SuplaBundle/Tests/Integration/IntegrationTestCaseListener.php"/>
+    </listeners>
+
+    <testsuites>
+        <testsuite name="unit">
+            <directory>../src/*Bundle/Tests</directory>
+            <exclude>../src/*Bundle/Tests/Integration</exclude>
+        </testsuite>
+        <testsuite name="integration">
+            <directory>../src/*Bundle/Tests/Integration</directory>
+        </testsuite>
+    </testsuites>
+
+    <filter>
+        <whitelist>
+            <directory>../src</directory>
+            <exclude>
+                <directory>../src/*Bundle/Resources</directory>
+                <directory>../src/*Bundle/Tests</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+</phpunit>

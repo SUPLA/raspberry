@@ -1,0 +1,172 @@
+@import "./variables";
+@import "./mixins";
+
+html {
+  overflow: -moz-scrollbars-vertical;
+  overflow-y: scroll;
+}
+
+body {
+  font-family: $supla-font-default;
+  color: $supla-black;
+  background: #FAFBFC;
+  font-weight: 400;
+  -webkit-font-smoothing: subpixel-antialiased;
+}
+
+::selection {
+  background: $supla-green;
+  color: $supla-white;
+}
+
+::-moz-selection {
+  background: $supla-green;
+  color: $supla-white;
+}
+
+// disable autofill yellow color in Chrome
+@-webkit-keyframes autofill {
+  to {
+    color: #666;
+    background: transparent;
+  }
+}
+
+input:-webkit-autofill {
+  -webkit-animation-name: autofill;
+  -webkit-animation-fill-mode: both;
+}
+
+h1 {
+  font-size: 42px;
+  line-height: 42px;
+  font-weight: 300;
+  text-transform: capitalize;
+  letter-spacing: -3px;
+}
+
+h1, h2, h3, h4 {
+  font-family: $supla-font-special;
+}
+
+a {
+  color: $supla-green;
+  transition: all .3s;
+  cursor: pointer;
+  &:active, &:focus, &:hover {
+    text-decoration: none;
+    color: $supla-grey-dark;
+    outline: none;
+    box-shadow: none;
+  }
+}
+
+* {
+  outline-color: $supla-green !important;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.no-margin-top {
+  margin-top: 0 !important;
+}
+
+.low-z-index { // fixes some problems with elements appearing incorrectly above the others
+  position: relative;
+  z-index: 1
+}
+
+.input-group-addon {
+  background: transparent !important;
+  border: 0 !important;
+  border-bottom: 1px solid $supla-grey-light !important;
+  border-radius: 0 !important;
+}
+
+input[type=text], input[type=password], input[type=email] {
+  &.form-control {
+    box-shadow: initial;
+  }
+}
+
+.fade {
+  &-enter-active, &-leave-active {
+    transition: opacity .5s
+  }
+  &-enter, &-leave-to {
+    opacity: 0
+  }
+}
+
+.label {
+  font-family: $supla-font-special;
+  text-transform: uppercase;
+  font-size: .9em;
+  line-height: initial;
+  &.label-danger {
+    background: #FF3939;
+  }
+  &.label-success {
+    background: $supla-green;
+    border: 1px solid white;
+  }
+  &.label-grey {
+    background: $supla-grey-dark;
+  }
+}
+
+.vue-switcher input {
+  height: initial !important;
+}
+
+[class^="pe-7s-"], [class*=" pe-7s-"] {
+  outline: none !important;
+}
+
+.grid-filters {
+  text-align: right;
+  ::-webkit-input-placeholder {
+    text-align: center;
+  }
+  ::-moz-placeholder {
+    text-align: center;
+  }
+  :-ms-input-placeholder {
+    text-align: center;
+  }
+  input[type=text] {
+    max-width: 150px;
+    display: inline-block;
+    margin-left: 5px;
+  }
+  > * {
+    margin-bottom: 5px;
+  }
+  @include on-xs-and-down {
+    text-align: center;
+    margin: 5px 0;
+  }
+}
+
+.left-right-header {
+  > :first-child {
+    float: left;
+  }
+  > :last-child {
+    float: right;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    @include on-xs-and-down {
+      float: none;
+      clear: both;
+      text-align: center;
+    }
+  }
+}
+
+@import "./buttons";
+@import "./navbar";
+@import "./notifications";
+@import "./start-here";

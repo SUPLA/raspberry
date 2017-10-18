@@ -1,0 +1,29 @@
+imports:
+  - { resource: config_dev.yml }
+
+doctrine:
+  dbal:
+    dbname: supla_test
+
+framework:
+  profiler:
+    collect: false
+  session:
+    storage_id: session.storage.mock_file
+  test: ~
+
+
+security:
+  firewalls:
+    main:
+      http_basic: ~
+
+services:
+  SuplaBundle\Supla\SuplaServer: '@SuplaBundle\Supla\SuplaServerMock'
+
+swiftmailer:
+  disable_delivery: true
+
+web_profiler:
+  toolbar: false
+  intercept_redirects: false

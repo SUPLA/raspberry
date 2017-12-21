@@ -14,8 +14,12 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 # 
 # @author Michał Wieczorek @michael
-# Special thanks for @fracz
+# Special thanks to @fracz
 ##
+
+CLOUD_VERSION=2.1.6
+SERVER_VERSION=1.8.5
+
 
 if [ "$(id -u)" != "0" ]; then
    echo "This script must be run as root. For example sudo ./$(basename "$0") 1>&2
@@ -27,11 +31,8 @@ now=$(date +"%m%d%Y%H%M%S")
 mysqldump -u root -p raspberry supla > /var/backups/supla"$now".sql
 gzip /var/backups/supla"$now".sql
 
-wget https://github.com/SUPLA/supla-cloud/releases/download/v2.1.6/supla-cloud-v2.1.6.tar.gz
-
-docker cp supla-server:/usr/local/bin/supla-server .
-docker cp supla-server:/usr/local/bin/supla-scheduler .
-
+wget https://github.com/SUPLA/supla-cloud/releases/download/v${CLOUD_VERSION}/supla-cloud-v${CLOUD_VERSION}.tar.gz
+wget https://github.com/SUPLA/supla-core/releases/download/v1.8.5/supla-server-v${SERVER_VERSION}-arm32v7.tgz
 
 [ -e /etc/init.d/supla-server ] && /etc/init.d/supla-server stop
 [ -e /etc/init.d/supla-scheduler ] && /etc/init.d/supla-scheduler stop
@@ -39,23 +40,24 @@ docker cp supla-server:/usr/local/bin/supla-scheduler .
 [ -e /usr/sbin/supla-server_"$now" ] || cp /usr/sbin/supla-server /usr/sbin/supla-server_"$now"
 [ -e /usr/sbin/supla-scheduler_"$now" ] || cp /usr/sbin/supla-server /usr/sbin/supla-scheduler_"$now"
 
-mv ./supla-server /usr/sbin/
-mv ./supla-scheduler /usr/sbin/
+tar -zxf supla-server-v${SERVER_VERSION}-arm32v7.tgz
+mv ./supla-server-v${SERVER_VERSION}-arm32v7/supla-server /usr/sbin/
+mv ./supla-server-v${SERVER_VERSION}-arm32v7/supla-scheduler /usr/sbin/
 
 [ -d /var/www/html_old_"$now" ] || mv /var/www/html /var/www/html_old_"$now"
 
-tar -zxf supla-cloud-v2.1.6.tar.gz -C /var/www/html
+tar -zxf supla-cloud-v${CLOUD_VERSION}.tar.gz -C /var/www/html
 
 cp /var/www/html_old_"$now"/app/config/parameters.yml /var/www/html/app/config/
 
-echo "    recaptcha_enabled: false" >> /var/www/html/app/config/parameters.yml
+grep "recaptcha_enabled > /dev/null 2>&1 || echo "    recaptcha_enabled: false" >> /var/www/html/app/config/parameters.yml
 
 cd /var/www/html
 
 php bin/console --no-interaction doctrine:migrations:migrate
 
-rm -fr ./supla-cloud-v2.1.6.tar.gz
-
+rm -fr ./supla-cloud-${CLOUD_VERSION}.tar.gz
+rm -fr  ./supla-server-v${SERVER_VERSION}-arm32v7.tgz
 systemctl daemon-reload
 /etc/init.d/apache2 restart
 /etc/init.d/supla-server start

@@ -41,6 +41,9 @@ wget https://github.com/SUPLA/supla-core/releases/download/v${SERVER_VERSION}/su
 [ -e /usr/sbin/supla-scheduler_"$now" ] || cp /usr/sbin/supla-server /usr/sbin/supla-scheduler_"$now"
 
 tar -zxf supla-server-v${SERVER_VERSION}-arm32v7.tgz
+chmod +x ./supla-server-v&{SERVER_VERSION}-arm32v7/supla-server
+chmod +x ./supla-server-v&{SERVER_VERSION}-arm32v7/supla-scheduler
+
 mv ./supla-server-v${SERVER_VERSION}-arm32v7/supla-server /usr/sbin/
 mv ./supla-server-v${SERVER_VERSION}-arm32v7/supla-scheduler /usr/sbin/
 

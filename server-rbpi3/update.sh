@@ -22,7 +22,7 @@ SERVER_VERSION=1.8.5
 
 
 if [ "$(id -u)" != "0" ]; then
-   echo "This script must be run as root. For example sudo ./$(basename "$0") 1>&2
+   echo "This script must be run as root. For example sudo ./$(basename "$0")" 1>&2
    exit 1
 fi
 
@@ -32,7 +32,7 @@ mysqldump -u root -p raspberry supla > /var/backups/supla"$now".sql
 gzip /var/backups/supla"$now".sql
 
 wget https://github.com/SUPLA/supla-cloud/releases/download/v${CLOUD_VERSION}/supla-cloud-v${CLOUD_VERSION}.tar.gz
-wget https://github.com/SUPLA/supla-core/releases/download/v1.8.5/supla-server-v${SERVER_VERSION}-arm32v7.tgz
+wget https://github.com/SUPLA/supla-core/releases/download/v${SERVER_VERSION}/supla-server-v${SERVER_VERSION}-arm32v7.tgz
 
 [ -e /etc/init.d/supla-server ] && /etc/init.d/supla-server stop
 [ -e /etc/init.d/supla-scheduler ] && /etc/init.d/supla-scheduler stop
@@ -55,6 +55,7 @@ grep "recaptcha_enabled > /dev/null 2>&1 || echo "    recaptcha_enabled: false" 
 cd /var/www/html
 
 php bin/console --no-interaction doctrine:migrations:migrate
+chown -R www-data:www-data /var/www/html
 
 rm -fr ./supla-cloud-${CLOUD_VERSION}.tar.gz
 rm -fr  ./supla-server-v${SERVER_VERSION}-arm32v7.tgz

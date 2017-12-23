@@ -53,7 +53,7 @@ tar -zxf supla-cloud-v${CLOUD_VERSION}.tar.gz -C /var/www/html
 
 cp /var/www/html_old_"$now"/app/config/parameters.yml /var/www/html/app/config/
 
-grep "recaptcha_enabled" > /dev/null 2>&1 || echo "    recaptcha_enabled: false" >> /var/www/html/app/config/parameters.yml
+grep "recaptcha_enabled" /var/www/html/app/config/parameters.yml > /dev/null 2>&1 || echo "    recaptcha_enabled: false" >> /var/www/html/app/config/parameters.yml
 
 cd /var/www/html
 

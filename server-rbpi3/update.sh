@@ -41,8 +41,8 @@ wget https://github.com/SUPLA/supla-core/releases/download/v${SERVER_VERSION}/su
 [ -e /usr/sbin/supla-scheduler_"$now" ] || cp /usr/sbin/supla-server /usr/sbin/supla-scheduler_"$now"
 
 tar -zxf supla-server-v${SERVER_VERSION}-arm32v7.tgz
-chmod +x ./supla-server-v&{SERVER_VERSION}-arm32v7/supla-server
-chmod +x ./supla-server-v&{SERVER_VERSION}-arm32v7/supla-scheduler
+chmod +x ./supla-server-v${SERVER_VERSION}-arm32v7/supla-server
+chmod +x ./supla-server-v${SERVER_VERSION}-arm32v7/supla-scheduler
 
 mv ./supla-server-v${SERVER_VERSION}-arm32v7/supla-server /usr/sbin/
 mv ./supla-server-v${SERVER_VERSION}-arm32v7/supla-scheduler /usr/sbin/
@@ -53,7 +53,7 @@ tar -zxf supla-cloud-v${CLOUD_VERSION}.tar.gz -C /var/www/html
 
 cp /var/www/html_old_"$now"/app/config/parameters.yml /var/www/html/app/config/
 
-grep "recaptcha_enabled > /dev/null 2>&1 || echo "    recaptcha_enabled: false" >> /var/www/html/app/config/parameters.yml
+grep "recaptcha_enabled" /var/www/html/app/config/parameters.yml > /dev/null 2>&1 || echo "    recaptcha_enabled: false" >> /var/www/html/app/config/parameters.yml
 
 cd /var/www/html
 

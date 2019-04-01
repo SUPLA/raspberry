@@ -12,56 +12,80 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-# 
+#
 # @author Michał Wieczorek @michael
-# Special thanks to @fracz
 ##
-
-CLOUD_VERSION=2.1.6
-SERVER_VERSION=1.8.5
 
 
 if [ "$(id -u)" != "0" ]; then
-   echo "This script must be run as root. For example sudo ./$(basename "$0")" 1>&2
+   echo "This script must be run as root. For example sudo ./$(basename "$0") 2.3.5" 1>&2
+   exit 1
+
+fi
+
+if [ -z "$*" ]; then
+   echo "Please add version to update. For example sudo ./$(basename "$0") 2.3.5" 1>&2
    exit 1
 fi
 
+#Setting variables
 now=$(date +"%m%d%Y%H%M%S")
+KATALOG=`pwd`
 
-mysqldump -u root -p raspberry supla > /var/backups/supla"$now".sql
+# Database backup with procedures
+mysqldump --routines -u root --password='raspberry' supla > /var/backups/supla"$now".sql
 gzip /var/backups/supla"$now".sql
 
-wget https://github.com/SUPLA/supla-cloud/releases/download/v${CLOUD_VERSION}/supla-cloud-v${CLOUD_VERSION}.tar.gz
-wget https://github.com/SUPLA/supla-core/releases/download/v${SERVER_VERSION}/supla-server-v${SERVER_VERSION}-arm32v7.tgz
+# Backup Supla-Cloud
+[ -d /var/www/html_old_"$now" ] || mv /var/www/html /var/www/html_old_"$now"
 
+# Downloading Supla-Cloud
+wget https://github.com/SUPLA/supla-cloud/releases/download/v$1/supla-cloud-v$1.tar.gz
+
+# Downloading Supla-Core
+git clone https://github.com/SUPLA/supla-core
+
+# Compiling Supla-Server and Supla-Scheduler
+cd supla-core/supla-server/Release && make all
+cd ../../supla-scheduler/Release && make all
+cd ../../../
+
+# Stopping the services Supla-Server and Supla-Scheduller
 [ -e /etc/init.d/supla-server ] && /etc/init.d/supla-server stop
 [ -e /etc/init.d/supla-scheduler ] && /etc/init.d/supla-scheduler stop
 
-[ -e /usr/sbin/supla-server_"$now" ] || cp /usr/sbin/supla-server /usr/sbin/supla-server_"$now"
-[ -e /usr/sbin/supla-scheduler_"$now" ] || cp /usr/sbin/supla-server /usr/sbin/supla-scheduler_"$now"
+# Backup Supla-Server and Supla-Scheduler
+[ -e /usr/sbin/supla-server_"$now" ] || cp /usr/local/bin/supla-server /usr/local/bin/supla-server_"$now"
+[ -e /usr/sbin/supla-scheduler_"$now" ] || cp /usr/local/bin/supla-scheduler /usr/local/bin/supla-scheduler_"$now"
 
-tar -zxf supla-server-v${SERVER_VERSION}-arm32v7.tgz
-chmod +x ./supla-server-v${SERVER_VERSION}-arm32v7/supla-server
-chmod +x ./supla-server-v${SERVER_VERSION}-arm32v7/supla-scheduler
+# Transferring new versions of the Supla-Server and Supla-Scheduler
+mv supla-core/supla-server/Release/supla-server /usr/local/bin/
+mv supla-core/supla-scheduler/Release/supla-scheduler /usr/local/bin/
 
-mv ./supla-server-v${SERVER_VERSION}-arm32v7/supla-server /usr/sbin/
-mv ./supla-server-v${SERVER_VERSION}-arm32v7/supla-scheduler /usr/sbin/
-
-[ -d /var/www/html_old_"$now" ] || mv /var/www/html /var/www/html_old_"$now"
-
-tar -zxf supla-cloud-v${CLOUD_VERSION}.tar.gz -C /var/www/html
-
+# Installation of the new version of Supla-Cloud
+mkdir /var/www/html
+tar -zxf supla-cloud-v$1.tar.gz -C /var/www/html
 cp /var/www/html_old_"$now"/app/config/parameters.yml /var/www/html/app/config/
 
-grep "recaptcha_enabled" /var/www/html/app/config/parameters.yml > /dev/null 2>&1 || echo "    recaptcha_enabled: false" >> /var/www/html/app/config/parameters.yml
+# Option - enter, if necessary, missing entries in the parameters.yml file according to the example below
+#grep "recaptcha_enabled" /var/www/html/app/config/parameters.yml > /dev/null 2>&1 || echo "    recaptcha_enabled: false" >> /var/www/html/app/config/parameters.yml
 
 cd /var/www/html
 
 php bin/console --no-interaction doctrine:migrations:migrate
 chown -R www-data:www-data /var/www/html
 
-rm -fr ./supla-cloud-${CLOUD_VERSION}.tar.gz
-rm -fr  ./supla-server-v${SERVER_VERSION}-arm32v7.tgz
+# Cleaning unnecessary post-installation files
+cd $KATALOG
+rm -fr supla-core
+rm -fr supla-cloud-v$1.tar.gz
+
+# Optional - copying scripts for events
+#cp /var/www/html_old_"$now"/src/SuplaBundle/Command/SimulateEventsCommand.php /var/www/html/src/SuplaBundle/Command
+#cp /var/www/html_old_"$now"/src/SuplaBundle/Command/events.yml /var/www/html/src/SuplaBundle/Command
+
+
+# Restart and launch of the Supla
 systemctl daemon-reload
 /etc/init.d/apache2 restart
 /etc/init.d/supla-server start

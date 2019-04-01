@@ -28,46 +28,46 @@ if [ -z "$*" ]; then
    exit 1
 fi
 
-#Ustawienie zmiennych
+#Setting variables
 now=$(date +"%m%d%Y%H%M%S")
 KATALOG=`pwd`
 
-# Backup bazy danych wraz z procedurami
+# Database backup with procedures
 mysqldump --routines -u root --password='raspberry' supla > /var/backups/supla"$now".sql
 gzip /var/backups/supla"$now".sql
 
 # Backup Supla-Cloud
 [ -d /var/www/html_old_"$now" ] || mv /var/www/html /var/www/html_old_"$now"
 
-# Pobieranie Supla-Cloud
+# Downloading Supla-Cloud
 wget https://github.com/SUPLA/supla-cloud/releases/download/v$1/supla-cloud-v$1.tar.gz
 
-# Pobieranie Supla-Core
+# Downloading Supla-Core
 git clone https://github.com/SUPLA/supla-core
 
-# Kompilowanie Supla-Server i Supla-Scheduler
+# Compiling Supla-Server and Supla-Scheduler
 cd supla-core/supla-server/Release && make all
 cd ../../supla-scheduler/Release && make all
 cd ../../../
 
-# Zatrzymywanie serwisów Supli
+# Stopping the services Supla-Server and Supla-Scheduller
 [ -e /etc/init.d/supla-server ] && /etc/init.d/supla-server stop
 [ -e /etc/init.d/supla-scheduler ] && /etc/init.d/supla-scheduler stop
 
-# Backup Supla-Server i Supla-Scheduler
+# Backup Supla-Server and Supla-Scheduler
 [ -e /usr/sbin/supla-server_"$now" ] || cp /usr/local/bin/supla-server /usr/local/bin/supla-server_"$now"
 [ -e /usr/sbin/supla-scheduler_"$now" ] || cp /usr/local/bin/supla-scheduler /usr/local/bin/supla-scheduler_"$now"
 
-# Przenoszenie nowych wersji Supla-Server i Supla-Scheduler
+# Transferring new versions of the Supla-Server and Supla-Scheduler
 mv supla-core/supla-server/Release/supla-server /usr/local/bin/
 mv supla-core/supla-scheduler/Release/supla-scheduler /usr/local/bin/
 
-# Instalacja nowej wersji Supla-Cloud
+# Installation of the new version of Supla-Cloud
 mkdir /var/www/html
 tar -zxf supla-cloud-v$1.tar.gz -C /var/www/html
 cp /var/www/html_old_"$now"/app/config/parameters.yml /var/www/html/app/config/
 
-# Opcja - dopisać w razie potrzeby brakujące wpisy w pliku paramaters.yml wg poniższego przykładu
+# Option - enter, if necessary, missing entries in the parameters.yml file according to the example below
 #grep "recaptcha_enabled" /var/www/html/app/config/parameters.yml > /dev/null 2>&1 || echo "    recaptcha_enabled: false" >> /var/www/html/app/config/parameters.yml
 
 cd /var/www/html
@@ -75,17 +75,17 @@ cd /var/www/html
 php bin/console --no-interaction doctrine:migrations:migrate
 chown -R www-data:www-data /var/www/html
 
-# Czyszczenie niepotrzebnych plików poinstalacyjnych
+# Cleaning unnecessary post-installation files
 cd $KATALOG
 rm -fr supla-core
 rm -fr supla-cloud-v$1.tar.gz
 
-# Opcjonalnie - kopiowanie skrytpów dla zdarzeń
+# Optional - copying scripts for events
 #cp /var/www/html_old_"$now"/src/SuplaBundle/Command/SimulateEventsCommand.php /var/www/html/src/SuplaBundle/Command
 #cp /var/www/html_old_"$now"/src/SuplaBundle/Command/events.yml /var/www/html/src/SuplaBundle/Command
 
 
-# Restart i uruchomienie Supli
+# Restart and launch of the Supla
 systemctl daemon-reload
 /etc/init.d/apache2 restart
 /etc/init.d/supla-server start

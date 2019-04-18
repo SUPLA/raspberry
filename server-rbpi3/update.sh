@@ -94,6 +94,9 @@ cd /var/www/html
 php bin/console --no-interaction doctrine:migrations:migrate
 chown -R www-data:www-data /var/www/html
 
+rm -fr var/cache/prod
+php bin/console cache:warmup
+
 # Cleaning unnecessary post-installation files
 rm -fr $TEMPDIR
 

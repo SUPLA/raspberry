@@ -94,18 +94,17 @@ cd /var/www/html
 php bin/console --no-interaction doctrine:migrations:migrate
 chown -R www-data:www-data /var/www/html
 
-rm -fr var/cache/prod
-php bin/console cache:warmup
-
-# Cleaning unnecessary post-installation files
-rm -fr $TEMPDIR
-
 # Optional - copying scripts for events
 if [ -e /var/www/html_old_"$NOW"/src/SuplaBundle/Command/SimulateEventsCommand.php ]; then
   echo Copying Simulate Events Command...
   cp /var/www/html_old_"$NOW"/src/SuplaBundle/Command/SimulateEventsCommand.php /var/www/html/src/SuplaBundle/Command
   cp /var/www/html_old_"$NOW"/src/SuplaBundle/Command/events.yml /var/www/html/src/SuplaBundle/Command
 fi
+
+# Cleaning unnecessary post-installation files
+rm -fr var/cache/prod
+php bin/console cache:warmup
+rm -fr $TEMPDIR
 
 # Restart and launch of the Supla
 systemctl daemon-reload

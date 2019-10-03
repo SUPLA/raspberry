@@ -5,7 +5,7 @@
 # Required-Stop:     $remote_fs $syslog
 # Default-Start:     2 3 4 5
 # Default-Stop:       
-# Short-Description: SUPLA SERVER
+# Short-Description: SUPLA SCHEDULER
 ### END INIT INFO
 
 # Author: Przemyslaw Zygmunt <przemek@supla.org>

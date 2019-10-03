@@ -102,8 +102,9 @@ if [ -e /var/www/html_old_"$NOW"/src/SuplaBundle/Command/SimulateEventsCommand.p
 fi
 
 # Cleaning unnecessary post-installation files
-rm -fr var/cache/prod
+rm -fr var/cache/*
 php bin/console cache:warmup
+chown -R www-data:www-data var/cache
 rm -fr $TEMPDIR
 
 # Restart and launch of the Supla

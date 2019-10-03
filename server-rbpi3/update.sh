@@ -104,6 +104,7 @@ fi
 # Cleaning unnecessary post-installation files
 rm -fr var/cache/*
 php bin/console cache:warmup
+chown -R www-data:www-data var/cache
 rm -fr $TEMPDIR
 
 # Restart and launch of the Supla
